@@ -4,8 +4,8 @@ sudo: required
 services:
   - docker
 
-matrix:
-  include:
+env:
+  matrix:
     TOMCAT_VERSION:
       - 8.0.52
       - 8.5.31
@@ -25,6 +25,7 @@ matrix:
       - ''
       - -nginx
 
+matrix:
   exclude:
     # Tomcat 8.0 is only Java 7 + 8
     - TOMCAT_VERSION: 8.0.52
