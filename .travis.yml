@@ -1,44 +1,13 @@
-langauge: generic
-
-sudo: required
-services:
-  - docker
-
 env:
   matrix:
-    TOMCAT_VERSION:
-      - 8.0.52
-      - 8.5.31
-      - 9.0.8
-    TOMCAT_JAVA_VERSION:
-      - jre8
-      - jre9
-      - jre10
-    TOMCAT_BASE:
-      - ''
-      - -alpine
-    LUCEE_VERSION:
-      - 4.5
-      - 5.2
-      - 5.3
-    LUCEE_SERVER:
-      - ''
-      - -nginx
-
-matrix:
-  exclude:
-    # Tomcat 8.0 is only Java 7 + 8
-    - TOMCAT_VERSION: 8.0.52
-      TOMCAT_JAVA_VERSION: jre9
-    - TOMCAT_VERSION: 8.0.52
-      TOMCAT_JAVA_VERSION: jre10
-
-    # Alpine does not yet have Java 9 or 10
-    - TOMCAT_JAVA_VERSION: jre9
-      TOMCAT_BASE: alpine
-    - TOMCAT_JAVA_VERSION: jre10
-      TOMCAT_BASE: alpine
-
+  - TOMCAT_VERSION=8.0.52 TOMCAT_JAVA_VERSION=jre8 TOMCAT_BASE= LUCEE_VERSION=5.2 LUCEE_SERVER= LUCEE_VARIANT=
+  - TOMCAT_VERSION=8.0.52 TOMCAT_JAVA_VERSION=jre8 TOMCAT_BASE= LUCEE_VERSION=5.2 LUCEE_SERVER= LUCEE_VARIANT=-light
+  - TOMCAT_VERSION=8.0.52 TOMCAT_JAVA_VERSION=jre8 TOMCAT_BASE=-alpine LUCEE_VERSION=5.2 LUCEE_SERVER= LUCEE_VARIANT=
+  - TOMCAT_VERSION=8.0.52 TOMCAT_JAVA_VERSION=jre8 TOMCAT_BASE=-alpine LUCEE_VERSION=5.2 LUCEE_SERVER= LUCEE_VARIANT=-light
+langauge: generic
 script:
-  - docker pull docker.io/library/tomcat:$TOMCAT_VERSION-$TOMCAT_JAVA_VERSION$TOMCAT_BASE
-  - echo "lucee/lucee:$LUCEE_VERSION$LUCEE_SERVER-tomcat$TOMCAT_VERSION-$TOMCAT_JAVA_VERSION$TOMCAT_BASE"
+- docker pull docker.io/library/tomcat:$TOMCAT_VERSION-$TOMCAT_JAVA_VERSION$TOMCAT_BASE
+- echo "lucee/lucee:$LUCEE_VERSION$LUCEE_SERVER-tomcat$TOMCAT_VERSION-$TOMCAT_JAVA_VERSION$TOMCAT_BASE"
+services:
+- docker
+sudo: required
