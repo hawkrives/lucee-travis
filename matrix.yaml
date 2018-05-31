@@ -4,7 +4,7 @@ travis:
         - docker
     langauge: generic
     script:
-        - build-images.sh
+        - python3 build-images.py
 
 defaults:
     TOMCAT_VERSION: '8.0'
