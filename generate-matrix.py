@@ -7,14 +7,15 @@ with open('./matrix.yaml') as matrix_input:
 
 # print(matrix)
 
+matrix_vars = matrix['matrix']
 rows = []
 
-for TOMCAT_VERSION in matrix['TOMCAT_VERSION']:
-	for TOMCAT_JAVA_VERSION in matrix['TOMCAT_JAVA_VERSION']:
-		for TOMCAT_BASE_IMAGE in matrix['TOMCAT_BASE_IMAGE']:
-			for LUCEE_VERSION in matrix['LUCEE_VERSION']:
-				for LUCEE_SERVER in matrix['LUCEE_SERVER']:
-					for LUCEE_VARIANT in matrix['LUCEE_VARIANT']:
+for TOMCAT_VERSION in matrix_vars['TOMCAT_VERSION']:
+	for TOMCAT_JAVA_VERSION in matrix_vars['TOMCAT_JAVA_VERSION']:
+		for TOMCAT_BASE_IMAGE in matrix_vars['TOMCAT_BASE_IMAGE']:
+			for LUCEE_VERSION in matrix_vars['LUCEE_VERSION']:
+				for LUCEE_SERVER in matrix_vars['LUCEE_SERVER']:
+					for LUCEE_VARIANT in matrix_vars['LUCEE_VARIANT']:
 						row = {
 							'TOMCAT_VERSION': TOMCAT_VERSION,
 							'TOMCAT_JAVA_VERSION': TOMCAT_JAVA_VERSION,
