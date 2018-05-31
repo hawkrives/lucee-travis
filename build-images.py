@@ -121,19 +121,18 @@ def main():
 		dockerfile = pick_dockerfile(config)
 
 		tags = find_tags_for_image(config, default_tomcat=matrix['default_tomcat'], tags=matrix['tags'])
-		tags = flatten([["-t", f"{namespace}/{image_name}:{tag}"] for tag in tags])
 
 		if args.list_tags:
-			tags = [tag for tag in tags if tag != '-t']
-			tags = [tag.split(':')[1] for tag in tags]
 			print(", ".join(tags))
 			continue
 
+		plain_tags = [f"{namespace}/{image_name}:{tag}" for tag in tags]
+		tag_args = flatten([["-t", tag] for tag in plain_tags])
 		command = [
 			"docker", "build",
 			*build_args,
 			"-f", dockerfile,
-			*tags,
+			*tag_args,
 			".",
 		]
 
@@ -142,7 +141,7 @@ def main():
 		if args.build:
 			run(command)
 
-		for tag in tags:
+		for tag in plain_tags:
 			if is_master_build and args.push:
 				print('pushing', tag)
 				run(["docker", "push", tag])
