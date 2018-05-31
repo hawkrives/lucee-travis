@@ -17,7 +17,7 @@ env:
 language: python
 python: 3.6
 script:
-- python3 -u build-images.py
+- 'echo TRAVIS_BRANCH: $TRAVIS_BRANCH'
 services:
 - docker
 sudo: required
