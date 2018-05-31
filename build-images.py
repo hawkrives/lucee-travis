@@ -17,7 +17,7 @@ def discover_images():
 	lucee_variants = os.getenv('LUCEE_VARIANTS').split(',')
 	tomcat_version = os.getenv('TOMCAT_VERSION')
 	tomcat_java_version = os.getenv('TOMCAT_JAVA_VERSION')
-	tomcat_base_image = os.getenv('TOMCAT_BASE')
+	tomcat_base_image = os.getenv('TOMCAT_BASE_IMAGE')
 
 	for lucee_version in lucee_versions:
 		for lucee_server in lucee_servers:
@@ -25,27 +25,34 @@ def discover_images():
 				alternate_tags = []
 
 				is_default_tomcat = \
-					tomcat_java_version == matrix['defaults']['TOMCAT_JAVA_VERSION'] and \
-					tomcat_version == matrix['defaults']['TOMCAT_VERSION'] and \
-					tomcat_base_image == matrix['defaults']['TOMCAT_BASE']
+					tomcat_java_version == matrix['default_tomcat']['TOMCAT_JAVA_VERSION'] and \
+					tomcat_version == matrix['default_tomcat']['TOMCAT_VERSION'] and \
+					tomcat_base_image == matrix['default_tomcat']['TOMCAT_BASE_IMAGE']
 
 				if is_default_tomcat:
 					alternate_tags.append(f"{lucee_version}{lucee_variant}{lucee_server}")
-				if is_default_tomcat and (not lucee_variant and not lucee_server):
-					alternate_tags.append(f"{get_minor_version(lucee_version)}")
+
+				config = {
+					'LUCEE_VERSION': lucee_version,
+					'LUCEE_SERVER': lucee_server,
+					'LUCEE_VARIANT': lucee_variant,
+					'TOMCAT_VERSION': tomcat_version,
+					'TOMCAT_JAVA_VERSION': tomcat_java_version,
+					'TOMCAT_BASE_IMAGE': tomcat_base_image,
+				}
+
+				manual_tags = [
+					tag_name
+					for tag_name, tag_requirements in matrix['tags'].items()
+			 		if all([config[key] == tag_requirements[key] for key in set(config.keys())])
+				]
+				alternate_tags += manual_tags
 
 				yield {
 					'primary_tag': f"{lucee_version}{lucee_variant}{lucee_server}-tomcat{tomcat_version}-{tomcat_java_version}{tomcat_base_image}",
 					'alternate_tags': alternate_tags,
 					'base_tag': f"lucee:{lucee_version}-tomcat{tomcat_version}-{tomcat_java_version}{tomcat_base_image}",
-					'config': {
-						'LUCEE_VERSION': lucee_version,
-						'LUCEE_SERVER': lucee_server,
-						'LUCEE_VARIANT': lucee_variant,
-						'TOMCAT_VERSION': tomcat_version,
-						'TOMCAT_JAVA_VERSION': tomcat_java_version,
-						'TOMCAT_BASE_IMAGE': tomcat_base_image,
-					}
+					'config': config,
 				}
 
 for image in discover_images():
@@ -62,8 +69,7 @@ for image in discover_images():
 	tags = [arg for value in tags for arg in ['-t', f"kryestofer/lucee:{value}"]]
 
 	if not image['config']['LUCEE_SERVER'] and not image['config']['LUCEE_VARIANT']:
-		tags.append("-t")
-		tags.append(image['base_tag'])
+		tags += ["-t", image['base_tag']]
 
 	if image['config']['LUCEE_SERVER'] == '-nginx':
 		if image['config']['TOMCAT_BASE_IMAGE'] == '-alpine':

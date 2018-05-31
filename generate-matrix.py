@@ -11,14 +11,14 @@ rows = []
 
 for TOMCAT_VERSION in matrix['TOMCAT_VERSION']:
 	for TOMCAT_JAVA_VERSION in matrix['TOMCAT_JAVA_VERSION']:
-		for TOMCAT_BASE in matrix['TOMCAT_BASE']:
+		for TOMCAT_BASE_IMAGE in matrix['TOMCAT_BASE_IMAGE']:
 			for LUCEE_VERSION in matrix['LUCEE_VERSION']:
 				for LUCEE_SERVER in matrix['LUCEE_SERVER']:
 					for LUCEE_VARIANT in matrix['LUCEE_VARIANT']:
 						row = {
 							'TOMCAT_VERSION': TOMCAT_VERSION,
 							'TOMCAT_JAVA_VERSION': TOMCAT_JAVA_VERSION,
-							'TOMCAT_BASE': TOMCAT_BASE,
+							'TOMCAT_BASE_IMAGE': TOMCAT_BASE_IMAGE,
 							'LUCEE_VERSION': LUCEE_VERSION,
 							'LUCEE_SERVER': LUCEE_SERVER,
 							'LUCEE_VARIANT': LUCEE_VARIANT,
@@ -34,11 +34,11 @@ for TOMCAT_VERSION in matrix['TOMCAT_VERSION']:
 						rows.append(row)
 
 combinations = []
-for tomcat, combination in itertools.groupby(rows, lambda row: (row['TOMCAT_VERSION'], row['TOMCAT_JAVA_VERSION'], row['TOMCAT_BASE'])):
+for tomcat, combination in itertools.groupby(rows, lambda row: (row['TOMCAT_VERSION'], row['TOMCAT_JAVA_VERSION'], row['TOMCAT_BASE_IMAGE'])):
 	result = {
 		'TOMCAT_VERSION': tomcat[0],
 		'TOMCAT_JAVA_VERSION': tomcat[1],
-		'TOMCAT_BASE': tomcat[2],
+		'TOMCAT_BASE_IMAGE': tomcat[2],
 		'LUCEE_VERSION': set(),
 		'LUCEE_SERVER': set(),
 		'LUCEE_VARIANT': set(),
@@ -60,7 +60,7 @@ for combo in combinations:
 	strs.append(" ".join([
 		f"TOMCAT_VERSION={combo['TOMCAT_VERSION']}",
 		f"TOMCAT_JAVA_VERSION={combo['TOMCAT_JAVA_VERSION']}",
-		f"TOMCAT_BASE={combo['TOMCAT_BASE']}",
+		f"TOMCAT_BASE_IMAGE={combo['TOMCAT_BASE_IMAGE']}",
 		f"LUCEE_VERSION={lucee_versions}",
 		f"LUCEE_SERVER={lucee_servers}",
 		f"LUCEE_VARIANTS={lucee_variants}",
