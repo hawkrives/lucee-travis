@@ -1,0 +1,43 @@
+TOMCAT_VERSION:
+    - 8.0.52
+    # - 8.5.31
+    # - 9.0.8
+
+TOMCAT_JAVA_VERSION:
+    - jre8
+    # - jre9
+    # - jre10
+
+TOMCAT_BASE:
+    - ''
+    - -alpine
+
+LUCEE_VERSION:
+    # - 4.5
+    - 5.2
+    # - 5.3
+
+LUCEE_SERVER:
+    - ''
+    # - -nginx
+
+LUCEE_VARIANT:
+    - ''
+    - -light
+
+exclusions:
+    # Tomcat 8.0 is only Java 7 + 8
+    - TOMCAT_VERSION: 8.0.52
+      TOMCAT_JAVA_VERSION: jre9
+    - TOMCAT_VERSION: 8.0.52
+      TOMCAT_JAVA_VERSION: jre10
+
+    # Alpine does not yet have Java 9 or 10
+    - TOMCAT_JAVA_VERSION: jre9
+      TOMCAT_BASE: -alpine
+    - TOMCAT_JAVA_VERSION: jre10
+      TOMCAT_BASE: -alpine
+
+    # -light is only available for 5.1+
+    - LUCEE_VARIANT: -light
+      LUCEE_VERSION: 4.5
