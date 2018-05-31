@@ -8,7 +8,8 @@ import yaml
 with open('./matrix.yaml') as matrix_file:
 	matrix = yaml.safe_load(matrix_file)
 
-is_master_build = os.getenv('TRAVIS_PULL_REQUEST', None) == 'false'
+is_master_build = os.getenv('TRAVIS_BRANCH', None) == 'master'
+print('will we deploy:', 'yes' if is_master_build else 'no')
 
 def get_minor_version(ver):
 	return re.sub(r"^(\d+\.\d+).*", r"\1", ver)
@@ -46,7 +47,7 @@ def discover_images():
 				manual_tags = [
 					tag_name
 					for tag_name, tag_requirements in matrix['tags'].items()
-			 		if all([config[key] == tag_requirements[key] for key in set(config.keys())])
+					if all([config[key] == tag_requirements[key] for key in set(config.keys())])
 				]
 				alternate_tags += manual_tags
 
@@ -98,6 +99,8 @@ for image in discover_images():
 	for tag in [tag for tag in tags if tag.startswith('kryestofer/')]:
 		print(tag)
 		if is_master_build:
-		    subprocess.run(["docker", "push", tag], stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+			push_proc = subprocess.run(["docker", "push", tag], stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+			print(push_proc.stdout)
+			print(push_proc.stderr)
 		else:
-		    print('skipping deployment due to being on a PR')
+			print('not on master; skipping deployment')
