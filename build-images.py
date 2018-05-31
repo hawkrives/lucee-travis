@@ -70,11 +70,11 @@ def find_tags_for_image(config, default_tomcat, tags):
 	]
 
 
-def config_to_build_args(config):
+def config_to_build_args(config, namespace, image_name):
 	if config.LUCEE_SERVER == '':
 		build_args = {**attr.asdict(config), 'LUCEE_MINOR': get_minor_version(config.LUCEE_VERSION)}
 	elif config.LUCEE_SERVER == '-nginx':
-		build_args = {'LUCEE_IMAGE': f"{config.LUCEE_VERSION}{config.LUCEE_VARIANT}-{tomcat(config)}"}
+		build_args = {'LUCEE_IMAGE': f"{namespace}/{image_name}:{config.LUCEE_VERSION}{config.LUCEE_VARIANT}-{tomcat(config)}"}
 	else:
 		build_args = {}
 
@@ -117,7 +117,7 @@ def main():
 	image_name = matrix['config']['docker_hub_image']
 
 	for config in discover_images():
-		build_args = list(config_to_build_args(config))
+		build_args = list(config_to_build_args(config, namespace=namespace, image_name=image_name))
 		dockerfile = pick_dockerfile(config)
 
 		tags = find_tags_for_image(config, default_tomcat=matrix['default_tomcat'], tags=matrix['tags'])
