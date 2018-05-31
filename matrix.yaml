@@ -2,7 +2,7 @@ travis:
     sudo: required
     services:
         - docker
-    langauge: python
+    language: python
     python: 3.6
     before_script:
         - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
