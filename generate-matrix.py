@@ -101,16 +101,12 @@ def main():
 
 	if args.list_tags:
 		for row in coalesced:
-			proc = subprocess.run(
+			subprocess.run(
 				["./build-images.py", "--list-tags"],
 				universal_newlines=True,
-				stdout=subprocess.PIPE,
-				stderr=subprocess.PIPE,
 				check=True,
 				env={**row, 'PATH': os.getenv('PATH')},
 			)
-			print(proc.stdout)
-			print(proc.stderr)
 		return
 
 	travis_env_rows = [combination_to_env_line(combo) for combo in coalesced]

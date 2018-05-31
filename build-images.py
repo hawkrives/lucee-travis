@@ -25,7 +25,7 @@ def get_minor_version(ver):
 	return re.sub(r"^(\d+\.\d+).*", r"\1", ver)
 
 def run(cmd):
-	return subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True, universal_newlines=True)
+	return subprocess.run(cmd, check=True, universal_newlines=True)
 
 def tomcat(config):
 	return f"tomcat{config.TOMCAT_VERSION}-{config.TOMCAT_JAVA_VERSION}{config.TOMCAT_BASE_IMAGE}"
@@ -140,16 +140,12 @@ def main():
 		print(' '.join(command))
 
 		if args.build:
-			proc = run(command)
-			print(proc.stdout)
-			print(proc.stderr)
+			run(command)
 
 		for tag in tags:
 			if is_master_build and args.push:
 				print('pushing', tag)
-				push_proc = run(["docker", "push", tag])
-				print(push_proc.stdout)
-				print(push_proc.stderr)
+				run(["docker", "push", tag])
 			else:
 				print('not on master; skipping deployment of', tag)
 
