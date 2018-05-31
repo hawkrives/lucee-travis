@@ -5,8 +5,6 @@ import sys
 with open('./matrix.yaml') as matrix_input:
 	matrix = yaml.safe_load(matrix_input)
 
-# print(matrix)
-
 matrix_vars = matrix['matrix']
 rows = []
 
@@ -68,10 +66,6 @@ for combo in combinations:
 		f"LUCEE_VARIANTS={lucee_variants}",
 	]))
 
-# for combo in strs:
-# 	print(combo)
-
-# sys.exit(0)
 conf = {
 	**matrix['travis'],
 	'env': {
