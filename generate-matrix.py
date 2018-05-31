@@ -1,5 +1,10 @@
+#!/usr/bin/env python3
+
+import subprocess
 import itertools
+import argparse
 import sys
+import os
 import yaml
 
 
@@ -52,23 +57,36 @@ def combine_rows_by_tomcat(rows):
 		yield result
 
 
-def combinations_to_travis_env(combinations):
+def coalesce_combinations(combinations):
 	for combo in combinations:
 		lucee_versions = ",".join(sorted(combo['LUCEE_VERSION']))
 		lucee_servers = ",".join(sorted(combo['LUCEE_SERVER']))
 		lucee_variants = ",".join(sorted(combo['LUCEE_VARIANT']))
 
-		yield " ".join([
-			f"TOMCAT_VERSION={combo['TOMCAT_VERSION']}",
-			f"TOMCAT_JAVA_VERSION={combo['TOMCAT_JAVA_VERSION']}",
-			f"TOMCAT_BASE_IMAGE={combo['TOMCAT_BASE_IMAGE']}",
-			f"LUCEE_VERSION={lucee_versions}",
-			f"LUCEE_SERVER={lucee_servers}",
-			f"LUCEE_VARIANTS={lucee_variants}",
-		])
+		yield {
+			'TOMCAT_VERSION': combo['TOMCAT_VERSION'],
+			'TOMCAT_JAVA_VERSION': combo['TOMCAT_JAVA_VERSION'],
+			'TOMCAT_BASE_IMAGE': combo['TOMCAT_BASE_IMAGE'],
+			'LUCEE_VERSION': lucee_versions,
+			'LUCEE_SERVER': lucee_servers,
+			'LUCEE_VARIANTS': lucee_variants,
+		}
+
+
+def combination_to_env_line(combo):
+	return " ".join([f"{key}={value}" for key, value in combo.items()])
 
 
 def main():
+	parser = argparse.ArgumentParser(description='Start the build process.')
+	parser.add_argument('--list-tags', action='store_true', default=False,
+						help='only list the tags that would be generated')
+	parser.add_argument('--dry-run', action='store_true', default=False,
+						help='print the new travis config, but do not write it')
+	parser.add_argument('--quiet', action='store_true', default=False,
+						help='do not print the travis config')
+	args = parser.parse_args()
+
 	with open('./matrix.yaml') as matrix_input:
 		matrix = yaml.safe_load(matrix_input)
 
@@ -79,21 +97,38 @@ def main():
 	]
 
 	combinations = list(combine_rows_by_tomcat(rows))
-	travis_env_rows = list(combinations_to_travis_env(combinations))
+	coalesced = list(coalesce_combinations(combinations))
 
-	conf = {
+	if args.list_tags:
+		for row in coalesced:
+			proc = subprocess.run(
+				["./build-images.py", "--list-tags"],
+				universal_newlines=True,
+				stdout=subprocess.PIPE,
+				stderr=subprocess.PIPE,
+				check=True,
+				env={**row, 'PATH': os.getenv('PATH')},
+			)
+			print(proc.stdout)
+			print(proc.stderr)
+		return
+
+	travis_env_rows = [combination_to_env_line(combo) for combo in coalesced]
+	config = {
 		**matrix['travis'],
 		'env': {
 			'matrix': travis_env_rows,
 		},
 	}
 
-	conf_stringified = yaml.dump(conf, default_flow_style=False, width=240, indent=2)
+	conf_stringified = yaml.dump(config, default_flow_style=False, width=240, indent=2)
 
-	print(conf_stringified)
+	if not args.quiet:
+		print(conf_stringified)
 
-	with open('./.travis.yml', 'w') as travis_config:
-		travis_config.write(conf_stringified)
+	if not args.dry_run:
+		with open('./.travis.yml', 'w') as travis_config:
+			travis_config.write(conf_stringified)
 
 
 if __name__ == '__main__':
