@@ -6,7 +6,7 @@ travis:
     python: 3.6
     before_script:
         - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-        - pip3 install pyyaml
+        - pip3 install -r requirements.txt
     script:
         - python3 -u build-images.py
 
