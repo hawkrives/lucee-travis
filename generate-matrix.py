@@ -24,11 +24,12 @@ for TOMCAT_VERSION in matrix['TOMCAT_VERSION']:
 							'LUCEE_VARIANT': LUCEE_VARIANT,
 						}
 
-						matches = False
-						for exclusion in matrix['exclusions']:
-							exclusion_keys = set(exclusion.keys())
-							matches = matches or all([row[key] == exclusion[key] for key in exclusion_keys])
-						if matches:
+						should_exclude = any([
+							True
+							for exclusion in matrix['exclusions']
+							if all([row[key] == exclusion[key] for key in set(exclusion.keys())])
+						])
+						if should_exclude:
 							continue
 
 						rows.append(row)
