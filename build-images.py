@@ -8,7 +8,7 @@ import yaml
 with open('./matrix.yaml') as matrix_file:
 	matrix = yaml.safe_load(matrix_file)
 
-is_master_build = os.getenv('TRAVIS_BRANCH', None) == 'master'
+is_master_build = os.getenv('TRAVIS_PULL_REQUEST', None) == 'false'
 print('will we deploy:', 'yes' if is_master_build else 'no')
 
 def get_minor_version(ver):
