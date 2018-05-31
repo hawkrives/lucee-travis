@@ -82,10 +82,10 @@ for image in discover_images():
 	]
 
 	print(' '.join(command))
-	proc = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+	proc = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, check=True)
 	print(proc.stdout)
 	print(proc.stderr)
 
 	for tag in [tag for tag in tags if tag.startswith('kryestofer/')]:
 		print(tag)
-		subprocess.run(["docker", "push", tag], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+		subprocess.run(["docker", "push", tag], stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
