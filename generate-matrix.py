@@ -1,4 +1,6 @@
 import yaml
+import itertools
+import sys
 
 with open('./matrix.yaml') as matrix_input:
 	matrix = yaml.safe_load(matrix_input)
@@ -31,24 +33,49 @@ for TOMCAT_VERSION in matrix['TOMCAT_VERSION']:
 
 						rows.append(row)
 
-strs = [
-	" ".join([
-		f"TOMCAT_VERSION={row['TOMCAT_VERSION']}",
-		f"TOMCAT_JAVA_VERSION={row['TOMCAT_JAVA_VERSION']}",
-		f"TOMCAT_BASE={row['TOMCAT_BASE']}",
-		f"LUCEE_VERSION={row['LUCEE_VERSION']}",
-		f"LUCEE_SERVER={row['LUCEE_SERVER']}",
-		f"LUCEE_VARIANT={row['LUCEE_VARIANT']}",
-	]) for row in rows
-]
+combinations = []
+for tomcat, combination in itertools.groupby(rows, lambda row: (row['TOMCAT_VERSION'], row['TOMCAT_JAVA_VERSION'], row['TOMCAT_BASE'])):
+	result = {
+		'TOMCAT_VERSION': tomcat[0],
+		'TOMCAT_JAVA_VERSION': tomcat[1],
+		'TOMCAT_BASE': tomcat[2],
+		'LUCEE_VERSION': set(),
+		'LUCEE_SERVER': set(),
+		'LUCEE_VARIANT': set(),
+	}
+
+	for row in combination:
+		result['LUCEE_VERSION'].add(str(row['LUCEE_VERSION']))
+		result['LUCEE_SERVER'].add(str(row['LUCEE_SERVER']))
+		result['LUCEE_VARIANT'].add(str(row['LUCEE_VARIANT']))
+
+	combinations.append(result)
+
+strs = []
+for combo in combinations:
+	lucee_versions = ",".join(combo['LUCEE_VERSION'])
+	lucee_servers = ",".join(combo['LUCEE_SERVER'])
+	lucee_variants = ",".join(combo['LUCEE_VARIANT'])
+
+	strs.append(" ".join([
+		f"TOMCAT_VERSION={combo['TOMCAT_VERSION']}",
+		f"TOMCAT_JAVA_VERSION={combo['TOMCAT_JAVA_VERSION']}",
+		f"TOMCAT_BASE={combo['TOMCAT_BASE']}",
+		f"LUCEE_VERSION={lucee_versions}",
+		f"LUCEE_SERVER={lucee_servers}",
+		f"LUCEE_VARIANTS={lucee_variants}",
+	]))
 
 # for combo in strs:
 # 	print(combo)
 
-with open('./.travis.yml') as travis_config:
-	conf = yaml.safe_load(travis_config)
-
-conf['env']['matrix'] = strs
+# sys.exit(0)
+conf = {
+	**matrix['travis'],
+	'env': {
+		'matrix': strs,
+	},
+}
 
 conf_stringified = yaml.dump(conf, default_flow_style=False, width=240, indent=2)
 
