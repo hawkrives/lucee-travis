@@ -15,16 +15,21 @@ travis:
         - python3 -u build-images.py
 
 
+config:
+    docker_hub_namespace: 'kryestofer'
+    docker_hub_image: 'lucee'
+
+
 default_tomcat: &tomcat
     TOMCAT_VERSION: '8.0'
-    TOMCAT_JAVA_VERSION: jre8
+    TOMCAT_JAVA_VERSION: 'jre8'
     TOMCAT_BASE_IMAGE: ''
 
 
 tags:
     '4.5': &4_5
         TOMCAT_VERSION: '8.0'
-        TOMCAT_JAVA_VERSION: jre8
+        TOMCAT_JAVA_VERSION: 'jre8'
         TOMCAT_BASE_IMAGE: ''
         LUCEE_VERSION: '4.5.5.015'
         LUCEE_SERVER: ''
@@ -32,7 +37,7 @@ tags:
 
     '5.2': &5_2
         TOMCAT_VERSION: '8.0'
-        TOMCAT_JAVA_VERSION: jre8
+        TOMCAT_JAVA_VERSION: 'jre8'
         TOMCAT_BASE_IMAGE: ''
         LUCEE_VERSION: '5.2.7.62'
         LUCEE_SERVER: ''
@@ -40,7 +45,7 @@ tags:
 
     '5.3': &5_3
         TOMCAT_VERSION: '8.0'
-        TOMCAT_JAVA_VERSION: jre8
+        TOMCAT_JAVA_VERSION: 'jre8'
         TOMCAT_BASE_IMAGE: ''
         LUCEE_VERSION: '5.3.0.86-BETA'
         LUCEE_SERVER: ''
@@ -57,6 +62,10 @@ tags:
     nginx:
         <<: *latest
         LUCEE_SERVER: '-nginx'
+    nginx-alpine:
+        <<: *latest
+        LUCEE_SERVER: '-nginx'
+        TOMCAT_BASE_IMAGE: '-alpine'
     light-nginx:
         <<: *latest
         LUCEE_SERVER: '-nginx'
@@ -82,6 +91,10 @@ tags:
     beta-nginx:
         <<: *beta
         LUCEE_SERVER: '-nginx'
+    beta-nginx-alpine:
+        <<: *beta
+        LUCEE_SERVER: '-nginx'
+        TOMCAT_BASE_IMAGE: '-alpine'
     beta-light-nginx:
         <<: *beta
         LUCEE_SERVER: '-nginx'
@@ -102,6 +115,10 @@ tags:
     4.5-nginx:
         <<: *4_5
         LUCEE_SERVER: '-nginx'
+    4.5-nginx-alpine:
+        <<: *4_5
+        LUCEE_SERVER: '-nginx'
+        TOMCAT_BASE_IMAGE: '-alpine'
 
     5.2-light:
         <<: *5_2
@@ -112,6 +129,10 @@ tags:
     5.2-nginx:
         <<: *5_2
         LUCEE_SERVER: '-nginx'
+    5.2-nginx-alpine:
+        <<: *5_2
+        LUCEE_SERVER: '-nginx'
+        TOMCAT_BASE_IMAGE: '-alpine'
     5.2-light-nginx:
         <<: *5_2
         LUCEE_SERVER: '-nginx'
@@ -135,6 +156,10 @@ tags:
     5.3-nginx:
         <<: *5_3
         LUCEE_SERVER: '-nginx'
+    5.3-nginx-alpine:
+        <<: *5_3
+        LUCEE_SERVER: '-nginx'
+        TOMCAT_BASE_IMAGE: '-alpine'
     5.3-light-nginx:
         <<: *5_3
         LUCEE_SERVER: '-nginx'
@@ -157,13 +182,13 @@ matrix:
         - '9.0'
 
     TOMCAT_JAVA_VERSION:
-        - jre8
-        - jre9
-        - jre10
+        - 'jre8'
+        - 'jre9'
+        - 'jre10'
 
     TOMCAT_BASE_IMAGE:
         - ''
-        - -alpine
+        - '-alpine'
 
     LUCEE_VERSION:
         # - '4.5.5.015'
@@ -172,26 +197,26 @@ matrix:
 
     LUCEE_SERVER:
         - ''
-        - -nginx
+        - '-nginx'
 
     LUCEE_VARIANT:
         - ''
-        - -light
+        - '-light'
 
 
 exclusions:
     # Tomcat 8.0 is only Java 7 + 8
     - TOMCAT_VERSION: '8.0'
-      TOMCAT_JAVA_VERSION: jre9
+      TOMCAT_JAVA_VERSION: 'jre9'
     - TOMCAT_VERSION: '8.0'
-      TOMCAT_JAVA_VERSION: jre10
+      TOMCAT_JAVA_VERSION: 'jre10'
 
     # Alpine does not yet have Java 9 or 10
-    - TOMCAT_JAVA_VERSION: jre9
-      TOMCAT_BASE_IMAGE: -alpine
-    - TOMCAT_JAVA_VERSION: jre10
-      TOMCAT_BASE_IMAGE: -alpine
+    - TOMCAT_JAVA_VERSION: 'jre9'
+      TOMCAT_BASE_IMAGE: '-alpine'
+    - TOMCAT_JAVA_VERSION: 'jre10'
+      TOMCAT_BASE_IMAGE: '-alpine'
 
     # -light is only available for 5.1+
-    - LUCEE_VARIANT: -light
+    - LUCEE_VARIANT: '-light'
       LUCEE_VERSION: '4.5'
