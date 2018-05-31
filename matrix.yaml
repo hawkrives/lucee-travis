@@ -5,7 +5,7 @@ travis:
     langauge: generic
     script:
         - docker pull docker.io/library/tomcat:$TOMCAT_VERSION-$TOMCAT_JAVA_VERSION$TOMCAT_BASE
-        - scripts/build-images.sh
+        - build-images.sh
 
 TOMCAT_VERSION:
     - 8.0.52
