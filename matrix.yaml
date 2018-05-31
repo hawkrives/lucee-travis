@@ -92,6 +92,59 @@ tags:
         LUCEE_VARIANT: '-light'
         TOMCAT_BASE_IMAGE: '-alpine'
 
+    4.5-alpine:
+        <<: *4_5
+        TOMCAT_BASE_IMAGE: '-alpine'
+    4.5-nginx:
+        <<: *4_5
+        LUCEE_SERVER: '-nginx'
+
+    5.2-light:
+        <<: *5_2
+        LUCEE_VARIANT: '-light'
+    5.2-alpine:
+        <<: *5_2
+        TOMCAT_BASE_IMAGE: '-alpine'
+    5.2-nginx:
+        <<: *5_2
+        LUCEE_SERVER: '-nginx'
+    5.2-light-nginx:
+        <<: *5_2
+        LUCEE_SERVER: '-nginx'
+        LUCEE_VARIANT: '-light'
+    5.2-light-alpine:
+        <<: *5_2
+        LUCEE_VARIANT: '-light'
+        TOMCAT_BASE_IMAGE: '-alpine'
+    5.2-light-nginx-alpine:
+        <<: *5_2
+        LUCEE_SERVER: '-nginx'
+        LUCEE_VARIANT: '-light'
+        TOMCAT_BASE_IMAGE: '-alpine'
+
+    5.3-light:
+        <<: *5_3
+        LUCEE_VARIANT: '-light'
+    5.3-alpine:
+        <<: *5_3
+        TOMCAT_BASE_IMAGE: '-alpine'
+    5.3-nginx:
+        <<: *5_3
+        LUCEE_SERVER: '-nginx'
+    5.3-light-nginx:
+        <<: *5_3
+        LUCEE_SERVER: '-nginx'
+        LUCEE_VARIANT: '-light'
+    5.3-light-alpine:
+        <<: *5_3
+        LUCEE_VARIANT: '-light'
+        TOMCAT_BASE_IMAGE: '-alpine'
+    5.3-light-nginx-alpine:
+        <<: *5_3
+        LUCEE_SERVER: '-nginx'
+        LUCEE_VARIANT: '-light'
+        TOMCAT_BASE_IMAGE: '-alpine'
+
 
 TOMCAT_VERSION:
     - '8.0'
