@@ -2,7 +2,11 @@ travis:
     sudo: required
     services:
         - docker
-    langauge: generic
+    langauge: python
+    python: 3.6
+    before_script:
+        - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+        - pip3 install pyyaml
     script:
         - python3 build-images.py
 
