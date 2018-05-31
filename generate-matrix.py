@@ -53,9 +53,9 @@ for tomcat, combination in itertools.groupby(rows, lambda row: (row['TOMCAT_VERS
 
 strs = []
 for combo in combinations:
-	lucee_versions = ",".join(combo['LUCEE_VERSION'])
-	lucee_servers = ",".join(combo['LUCEE_SERVER'])
-	lucee_variants = ",".join(combo['LUCEE_VARIANT'])
+	lucee_versions = ",".join(sorted(combo['LUCEE_VERSION']))
+	lucee_servers = ",".join(sorted(combo['LUCEE_SERVER']))
+	lucee_variants = ",".join(sorted(combo['LUCEE_VARIANT']))
 
 	strs.append(" ".join([
 		f"TOMCAT_VERSION={combo['TOMCAT_VERSION']}",
