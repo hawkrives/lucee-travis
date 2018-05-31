@@ -8,6 +8,8 @@ import yaml
 with open('./matrix.yaml') as matrix_file:
 	matrix = yaml.safe_load(matrix_file)
 
+is_master_build = os.getenv('TRAVIS_PULL_REQUEST', None) == 'false'
+
 def get_minor_version(ver):
 	return re.sub(r"^(\d+\.\d+).*", r"\1", ver)
 
@@ -88,10 +90,14 @@ for image in discover_images():
 	]
 
 	print(' '.join(command))
+
 	proc = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, check=True)
 	print(proc.stdout)
 	print(proc.stderr)
 
 	for tag in [tag for tag in tags if tag.startswith('kryestofer/')]:
 		print(tag)
-		subprocess.run(["docker", "push", tag], stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+		if is_master_build:
+		    subprocess.run(["docker", "push", tag], stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+		else:
+		    print('skipping deployment due to being on a PR')
