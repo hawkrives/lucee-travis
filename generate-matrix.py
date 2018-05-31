@@ -78,9 +78,8 @@ def main():
 		if should_include_combo(row, matrix['exclusions'])
 	]
 
-	combinations = combine_rows_by_tomcat(rows)
-
-	travis_env_rows = combinations_to_travis_env(combinations)
+	combinations = list(combine_rows_by_tomcat(rows))
+	travis_env_rows = list(combinations_to_travis_env(combinations))
 
 	conf = {
 		**matrix['travis'],
@@ -95,3 +94,7 @@ def main():
 
 	with open('./.travis.yml', 'w') as travis_config:
 		travis_config.write(conf_stringified)
+
+
+if __name__ == '__main__':
+	main()
