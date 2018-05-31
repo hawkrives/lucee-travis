@@ -4,13 +4,17 @@ travis:
         - docker
     langauge: generic
     script:
-        - docker pull docker.io/library/tomcat:$TOMCAT_VERSION-$TOMCAT_JAVA_VERSION$TOMCAT_BASE
         - build-images.sh
 
+defaults:
+    TOMCAT_VERSION: '8.0'
+    TOMCAT_JAVA_VERSION: jre8
+    TOMCAT_BASE: ''
+
 TOMCAT_VERSION:
-    - 8.0.52
-    - 8.5.31
-    - 9.0.8
+    - '8.0'
+    - '8.5'
+    - '9.0'
 
 TOMCAT_JAVA_VERSION:
     - jre8
@@ -22,9 +26,9 @@ TOMCAT_BASE:
     - -alpine
 
 LUCEE_VERSION:
-    - 4.5.5.015
-    - 5.2.7.62
-    - 5.3.0.86-BETA
+    - '4.5.5.015'
+    - '5.2.7.62'
+    - '5.3.0.86-BETA'
 
 LUCEE_SERVER:
     - ''
@@ -36,9 +40,9 @@ LUCEE_VARIANT:
 
 exclusions:
     # Tomcat 8.0 is only Java 7 + 8
-    - TOMCAT_VERSION: 8.0.52
+    - TOMCAT_VERSION: '8.0'
       TOMCAT_JAVA_VERSION: jre9
-    - TOMCAT_VERSION: 8.0.52
+    - TOMCAT_VERSION: '8.0'
       TOMCAT_JAVA_VERSION: jre10
 
     # Alpine does not yet have Java 9 or 10
@@ -49,4 +53,4 @@ exclusions:
 
     # -light is only available for 5.1+
     - LUCEE_VARIANT: -light
-      LUCEE_VERSION: 4.5
+      LUCEE_VERSION: '4.5'
