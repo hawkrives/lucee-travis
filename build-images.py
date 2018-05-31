@@ -49,8 +49,6 @@ def discover_images():
 				}
 
 for image in discover_images():
-	# print(image)
-
 	minor = get_minor_version(image['config']['LUCEE_VERSION'])
 
 	build_args = {
@@ -64,7 +62,8 @@ for image in discover_images():
 	tags = [arg for value in tags for arg in ['-t', f"kryestofer/lucee:{value}"]]
 
 	if not image['config']['LUCEE_SERVER'] and not image['config']['LUCEE_VARIANT']:
-		tags.append(f"-t {image['base_tag']}")
+		tags.append("-t")
+		tags.append(image['base_tag'])
 
 	if image['config']['LUCEE_SERVER'] == '-nginx':
 		if image['config']['TOMCAT_BASE_IMAGE'] == '-alpine':
@@ -83,7 +82,10 @@ for image in discover_images():
 	]
 
 	print(' '.join(command))
-	subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+	proc = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+	print(proc.stdout)
+	print(proc.stderr)
 
 	for tag in [tag for tag in tags if tag.startswith('kryestofer/')]:
+		print(tag)
 		subprocess.run(["docker", "push", tag], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
