@@ -8,7 +8,7 @@ travis:
         - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
         - pip3 install pyyaml
     script:
-        - python3 build-images.py
+        - python3 -u build-images.py
 
 defaults:
     TOMCAT_VERSION: '8.0'
